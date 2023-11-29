@@ -73,37 +73,46 @@
             <h2>User Profile</h2>
         </div>
         <div class="card graph-card">
-            <canvas id="playerMetricsChart" width="400" height="200"></canvas>
+            <h1>Player Metrics with Over/Under Percentage</h1>
 
-            <script>
-                // Look at Chart.js documentation
-                // Run flask app to display
-                fetch('/get_player_metrics')
-                    .then(response => response.json())
-                    .then(data => {
-                        var ctx = document.getElementById('playerMetricsChart').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: data.labels,
-                                datasets: [{
-                                    label: 'Player Scores',
-                                    data: data.scores,
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    });
-            </script>
+    <table id="playerTable">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+
+    <script>
+        function populateTable(tableId, data) {
+            const table = document.getElementById(tableId);
+            const tbody = table.querySelector('tbody');
+
+            // Clear existing rows
+            tbody.innerHTML = '';
+
+            // Populate the table with data
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                Object.values(item).forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+                tbody.appendChild(row);
+            });
+        }
+
+        fetch('/get_player_metrics')
+            .then(response => response.json())
+            .then(data => populateTable('playerTable', data))
+            .catch(error => console.error('Error:', error));
+    </script>
         </div>
     </div>
 
